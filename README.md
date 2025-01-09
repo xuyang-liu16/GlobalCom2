@@ -26,7 +26,6 @@ Bo Zheng<sup>2</sup>, <br>
 ## 🔥 News
 
 * `2025/01/09` 🤗🤗 We release our latest work GlobalCom<sup>2</sup> about accelerating **high-resolution MLLMs** for FREE. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
-* `2024/12/24` 🤗🤗 We release an open-sourse repo "[Awesome-Token-Reduction-for-Model-Compression](https://github.com/xuyang-liu16/Awesome-Token-Reduction-for-Model-Compression)", which collects recent awesome token reduction papers! Feel free to contribute your suggestions!
 
 ## ✨ Overview
 <p align="center"> <img src="overview.jpg" width="1000" align="center"> </p>

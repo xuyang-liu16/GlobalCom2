@@ -1,7 +1,16 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
-from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig
+from typing import Any, Optional, Tuple, Union
+from transformers import CLIPVisionModel, CLIPImageProcessor, CLIPVisionConfig, CLIPConfig
+from transformers.models.clip.modeling_clip import CLIPAttention, CLIPMLP, CLIPEncoderLayer, CLIPEncoder, CLIPVisionTransformer
+
+from transformers.modeling_outputs import BaseModelOutput, BaseModelOutputWithPooling
+import math
+from typing import Callable, Tuple,List
+
+from .apply_customvit import apply_customvit
 
 
 class CLIPVisionTower(nn.Module):
@@ -28,12 +37,20 @@ class CLIPVisionTower(nn.Module):
 
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
         self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
+        # Apply CustomCLIPViT
+        self.vision_tower = apply_customvit(self.vision_tower)
         self.vision_tower.requires_grad_(False)
 
         self.is_loaded = True
 
     def feature_select(self, image_forward_outs):
-        image_features = image_forward_outs.hidden_states[self.select_layer]
+        image_features = image_forward_outs.hidden_states[self.select_layer]  # [B*(1+num_crops), num_patches, feature_dim]
+        num_crops = image_features.size(0) - 1
+        feature_dim = image_features.size(-1)
+        base_image_feature = image_features[0, 1:, :]  
+        crop_image_features = image_features[1:, 1:, :]
+
+        
         if self.select_feature == 'patch':
             image_features = image_features[:, 1:]
         elif self.select_feature == 'cls_patch':
@@ -46,15 +63,19 @@ class CLIPVisionTower(nn.Module):
     def forward(self, images):
         if type(images) is list:
             image_features = []
+            attn_maps = []
             for image in images:
                 image_forward_out = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0), output_hidden_states=True)
-                image_feature = self.feature_select(image_forward_out).to(image.dtype)
+                image_feature = self.feature_select(image_forward_out[0])
+                attn_map = image_forward_out[1]
                 image_features.append(image_feature)
+                attn_maps.append(attn_map)
         else:
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
-            image_features = self.feature_select(image_forward_outs).to(images.dtype)
+            image_features = self.feature_select(image_forward_outs[0])
+            attn_maps = image_forward_outs[1] # list of 24 layers' attn_maps [1+num_crops, 577, 577]
 
-        return image_features
+        return image_features, attn_maps
 
     @property
     def dummy_feature(self):

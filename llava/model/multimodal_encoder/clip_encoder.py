@@ -37,7 +37,7 @@ class CLIPVisionTower(nn.Module):
 
         self.image_processor = CLIPImageProcessor.from_pretrained(self.vision_tower_name)
         self.vision_tower = CLIPVisionModel.from_pretrained(self.vision_tower_name, device_map=device_map)
-        # Apply CustomCLIPViT
+        # apply CustomCLIPViT to obtain attention scores
         self.vision_tower = apply_customvit(self.vision_tower)
         self.vision_tower.requires_grad_(False)
 
@@ -50,7 +50,6 @@ class CLIPVisionTower(nn.Module):
         base_image_feature = image_features[0, 1:, :]  
         crop_image_features = image_features[1:, 1:, :]
 
-        
         if self.select_feature == 'patch':
             image_features = image_features[:, 1:]
         elif self.select_feature == 'cls_patch':

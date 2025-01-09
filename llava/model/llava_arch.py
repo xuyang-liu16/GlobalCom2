@@ -17,6 +17,8 @@ from abc import ABC, abstractmethod
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
 
 from .multimodal_encoder.builder import build_vision_tower
 from .multimodal_projector.builder import build_vision_projector
@@ -96,36 +98,179 @@ class LlavaMetaModel:
 
             self.mm_projector.load_state_dict(get_w(mm_projector_weights, 'mm_projector'))
 
+retention_ratio = 0.25
 
-def unpad_image(tensor, original_size):
-    """
-    Unpads a PyTorch tensor of a padded and resized image.
+def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height, base_scale=retention_ratio, temperature=10.0):
 
-    Args:
-    tensor (torch.Tensor): The image tensor, assumed to be in CxHxW format.
-    original_size (tuple): The original size of PIL image (width, height).
+    N = base_cls_attn_scores.shape[0]
+    side_length = int(N ** 0.5)
 
-    Returns:
-    torch.Tensor: The unpadded image tensor.
-    """
-    original_width, original_height = original_size
-    current_height, current_width = tensor.shape[1:]
+    patch_width = side_length // num_patch_width
+    patch_height = side_length // num_patch_height
+    num_patches = num_patch_width * num_patch_height
 
-    original_aspect_ratio = original_width / original_height
-    current_aspect_ratio = current_width / current_height
+    patch_scores_sum = np.zeros(num_patches)
 
-    if original_aspect_ratio > current_aspect_ratio:
-        scale_factor = current_width / original_width
-        new_height = int(original_height * scale_factor)
-        padding = (current_height - new_height) // 2
-        unpadded_tensor = tensor[:, padding:current_height - padding, :]
+    # Accumulate scores in respective crop regions
+    for idx, score in enumerate(base_cls_attn_scores):
+        i, j = divmod(idx, side_length)
+        patch_i = i // patch_height
+        patch_j = j // patch_width
+        patch_index = patch_i * num_patch_width + patch_j  # convert 2D index to 1D index
+        patch_scores_sum[patch_index] += score.item()
+
+    # Normalize the scores and apply softmax
+    shifted_scores = (patch_scores_sum - np.max(patch_scores_sum)) / temperature
+    exp_scores = np.exp(shifted_scores)
+    softmax_scores = exp_scores / (np.sum(exp_scores) + 1e-8)  # add a small constant to avoid division by zero
+
+    # Calculate scales ensuring no scale exceeds 1
+    if np.sum(softmax_scores) == 0:
+        scales = [base_scale] * num_patches
     else:
-        scale_factor = current_height / original_height
-        new_width = int(original_width * scale_factor)
-        padding = (current_width - new_width) // 2
-        unpadded_tensor = tensor[:, :, padding:current_width - padding]
+        scales = base_scale * (1 + softmax_scores - np.mean(softmax_scores))
+        scales = np.clip(scales, None, 1.0)
 
-    return unpadded_tensor
+        # Adjust scales to ensure the average scale matches the base scale
+        final_average_scale = np.mean(scales)
+        if not np.isclose(final_average_scale, base_scale):
+            adjustment_factor = base_scale / final_average_scale
+            scales *= adjustment_factor
+            scales = np.clip(scales, None, 1.0)  # Ensure scales do not exceed 1
+
+    return scales.tolist()
+
+
+def extract_actual_dimensions(mask):
+    H, W = mask.shape
+    
+    # Find rows and columns that contain at least one 'True' value
+    rows = torch.any(mask, dim=1).nonzero(as_tuple=True)[0]
+    cols = torch.any(mask, dim=0).nonzero(as_tuple=True)[0]
+
+    if len(rows) == 0 or len(cols) == 0:
+        return 0, 0
+
+    # Calculate the actual height and width based on the bounding box of 'True' values
+    actual_height = rows[-1] - rows[0] + 1
+    actual_width = cols[-1] - cols[0] + 1
+
+    return actual_width, actual_height
+
+
+def get_original_indices(mask, num_img, num_tokens):
+
+    original_indices = []
+
+    for i in range(num_img):
+        # Find indices of 'True' positions in the mask for the i-th image
+        valid_indices = torch.nonzero(mask[i]).squeeze()
+
+        # Append the valid indices for this image
+        original_indices.append(valid_indices)
+
+    return original_indices
+
+
+def get_actual_crop_dimensions(mask, num_patch_width, num_patch_height):
+
+    crop_dimensions = []
+
+    for i in range(num_patch_height):
+        for j in range(num_patch_width):
+            # Extract the mask for the current patch
+            patch_mask = mask[i, j, :, :]
+            
+            # Find non-zero indices in the patch mask
+            non_zero_indices = torch.nonzero(patch_mask, as_tuple=True)
+            
+            if len(non_zero_indices[0]) == 0:
+                # If no non-zero indices, append (0, 0) for this patch
+                crop_dimensions.append((0, 0))
+            else:
+                # Calculate the dimensions of the crop based on non-zero indices
+                min_h, max_h = non_zero_indices[0].min().item(), non_zero_indices[0].max().item() + 1
+                min_w, max_w = non_zero_indices[1].min().item(), non_zero_indices[1].max().item() + 1
+                
+                cur_width = max_w - min_w
+                cur_height = max_h - min_h
+                
+                crop_dimensions.append((cur_width, cur_height))
+
+    return crop_dimensions
+
+
+def interpolate_and_split_cls_attn_scores(base_cls_attn_scores, cur_width, cur_height, num_patch_width, num_patch_height, crop_dimensions):
+
+    original_side_length = int(base_cls_attn_scores.shape[0] ** 0.5)
+    base_cls_attn_scores_2d = base_cls_attn_scores.view(1, 1, original_side_length, original_side_length)
+
+    # Interpolate the scores to the desired dimensions
+    cls_attn_scores_interpolated = F.interpolate(
+        base_cls_attn_scores_2d,
+        size=(cur_height, cur_width), 
+        mode='bilinear',               
+        align_corners=False            
+    ).squeeze()
+
+    global_crops_cls_attn_scores = []
+
+    current_h = 0 
+    for i in range(num_patch_height):
+        current_w = 0 
+        for j in range(num_patch_width):
+            index = i * num_patch_width + j
+            if index >= len(crop_dimensions):
+                break  
+
+            crop_width, crop_height = crop_dimensions[index]
+
+            # Extract and flatten the crop from interpolated scores
+            crop_flattened = cls_attn_scores_interpolated[
+                current_h:current_h+crop_height, 
+                current_w:current_w+crop_width
+            ].flatten()
+
+            global_crops_cls_attn_scores.append(crop_flattened)
+
+            current_w += crop_width
+
+        if i * num_patch_width < len(crop_dimensions):
+            current_h += crop_dimensions[i * num_patch_width][1]
+
+    return global_crops_cls_attn_scores
+
+
+def select_topk_crop_features(unpad_image_feature_list, unpad_cls_attn_scores_list, global_crops_cls_attn_scores, scales):
+
+    image_feature_compress = []
+    image_feature_compress_indices = []
+
+    for i in range(len(unpad_image_feature_list)):
+        valid_tokens = unpad_image_feature_list[i]
+        valid_cls_scores = unpad_cls_attn_scores_list[i]
+        orig_indices = torch.arange(valid_tokens.shape[0], device=valid_tokens.device)
+        N, _ = valid_tokens.shape
+
+        scale = scales[i]
+        top_k = int(N * scale)
+
+        global_crop_scores = global_crops_cls_attn_scores[i]
+
+        norm_valid_cls_scores = F.normalize(valid_cls_scores.unsqueeze(0), p=2, dim=-1).squeeze(0)
+        norm_global_crop_scores = F.normalize(global_crop_scores.unsqueeze(0), p=2, dim=-1).squeeze(0)
+
+        combined_scores = norm_valid_cls_scores + norm_global_crop_scores
+        
+        _, topk_indices = torch.topk(combined_scores, top_k)
+
+        topk_features = valid_tokens[topk_indices]
+        topk_orig_indices = orig_indices[topk_indices]
+
+        image_feature_compress.append(topk_features)
+        image_feature_compress_indices.append(topk_orig_indices)
+
+    return image_feature_compress, image_feature_compress_indices
 
 
 class LlavaMetaForCausalLM(ABC):
@@ -138,9 +283,114 @@ class LlavaMetaForCausalLM(ABC):
         return self.get_model().get_vision_tower()
 
     def encode_images(self, images):
-        image_features = self.get_model().get_vision_tower()(images)
+        image_features, attn_maps, = self.get_model().get_vision_tower()(images)
         image_features = self.get_model().mm_projector(image_features)
-        return image_features
+        return image_features, attn_maps
+
+    def compress_thumbnail(self, base_image_feature, base_cls_attn_scores, scale=retention_ratio):
+
+        N, _ = base_image_feature.shape
+        top_k = int(N * scale)
+
+        # Sort indices based on attention scores in descending order
+        sorted_indices = torch.argsort(base_cls_attn_scores, descending=True)
+        global_compressed_indices = sorted_indices[:top_k]
+        base_image_feature_compress = base_image_feature[sorted_indices[:top_k]]
+
+        return base_image_feature_compress, global_compressed_indices
+
+    def compress_crops(self, image_feature, 
+        cls_attn_scores, base_cls_attn_scores,
+        num_patch_width, num_patch_height, width, height, original_size, scales
+    ):
+
+        num_img, num_tokens, feature_dim = image_feature.shape
+        original_width, original_height = original_size
+        current_height, current_width = num_patch_height * height, num_patch_width * width
+
+        original_aspect_ratio = original_width / original_height
+        current_aspect_ratio = current_width / current_height
+
+        mask = torch.zeros((num_img, num_tokens), dtype=torch.bool, device=image_feature.device)
+        mask = mask.view(num_patch_height, num_patch_width, height, width).permute(0, 2, 1, 3).contiguous().flatten(0, 1).flatten(1, 2)
+
+        if original_aspect_ratio > current_aspect_ratio:
+            scale_factor = current_width / original_width
+            new_height = int(original_height * scale_factor)
+            padding = (current_height - new_height) // 2
+            mask[padding:current_height - padding, :] = True
+        else:
+            scale_factor = current_height / original_height
+            new_width = int(original_width * scale_factor)
+            padding = (current_width - new_width) // 2
+            mask[:, padding:current_width - padding] = True
+
+        cur_width, cur_height = extract_actual_dimensions(mask) # Extract the actual dimensions of the valid area
+        mask = mask.view(num_patch_height, height, num_patch_width, width).permute(0, 2, 1, 3).contiguous() # [num_patch_height, num_patch_width, height, width]
+        
+        # Get dimensions of each crop after unpadding
+        crop_dimensions = get_actual_crop_dimensions(mask, num_patch_width, num_patch_height) 
+        mask = mask.view(num_img, num_tokens)
+
+        # Unpad the image features and attention scores
+        unpad_image_feature_list = [image_feature[i][mask[i]] for i in range(num_img)]
+        unpad_cls_attn_scores_list = [cls_attn_scores[i][mask[i]] for i in range(num_img)]
+        original_indices = get_original_indices(mask, num_img, num_tokens)
+
+        # Interpolate and split the base attention scores
+        global_crops_cls_attn_scores = interpolate_and_split_cls_attn_scores(
+            base_cls_attn_scores, 
+            cur_width, cur_height, 
+            num_patch_width, num_patch_height, 
+            crop_dimensions
+        )
+
+        image_feature_compress, image_feature_compress_indices = select_topk_crop_features(
+            unpad_image_feature_list, unpad_cls_attn_scores_list, 
+            global_crops_cls_attn_scores, 
+            scales
+        )
+
+        # Add placeholder image_newline
+        final_image_features = torch.zeros((num_img, num_tokens, feature_dim), device=image_feature.device)
+        valid_token_mask = torch.zeros((num_img, num_tokens), dtype=torch.bool, device=image_feature.device)
+
+        # Update the features and mask based on compressed features and their indices
+        for img_idx in range(num_img):
+            feat_compressed = image_feature_compress[img_idx]
+            indices_compressed = image_feature_compress_indices[img_idx]
+
+            for feat_idx, idx in enumerate(indices_compressed):
+                if idx < num_tokens:  # Ensure the index is valid
+                    final_image_features[img_idx, idx] = feat_compressed[feat_idx]
+                    valid_token_mask[img_idx, idx] = True
+
+        # Reshape to the original patch dimensions and adjust the dimensions order
+        final_image_features = final_image_features.view(num_patch_height, num_patch_width, height, width, -1)
+        final_image_features = final_image_features.permute(4, 0, 2, 1, 3).contiguous()
+        final_image_features = final_image_features.flatten(1, 2).flatten(2, 3)  # [feature_dim, num_patch_height * height, num_patch_width * width]
+
+        valid_token_mask = valid_token_mask.view(num_patch_height, num_patch_width, height, width, -1)
+        valid_token_mask = valid_token_mask.permute(4, 0, 2, 1, 3).contiguous()
+        valid_token_mask = valid_token_mask.flatten(1, 2).flatten(2, 3)  # [1, num_patch_height * height, num_patch_width * width]
+
+        # Add an image_newline token for 2D shape
+        final_image_features = torch.cat((
+            final_image_features, 
+            self.model.image_newline[:, None, None].expand(*final_image_features.shape[:-1], 1).to(image_feature.device)
+        ), dim=-1)  # [feature_dim, num_patch_height * height, num_patch_width * width + 1]
+        final_image_features = final_image_features.flatten(1, 2).transpose(0, 1)
+
+        valid_token_mask = torch.cat((
+            valid_token_mask, 
+            torch.ones((1, num_patch_height * height, 1), dtype=torch.bool, device=image_feature.device)
+        ), dim=-1)
+        valid_token_mask = valid_token_mask.flatten(1, 2).squeeze(0)
+
+        final_image_feature_compress = final_image_features[valid_token_mask].to(dtype=torch.float16)
+
+        return final_image_feature_compress
+
 
     def prepare_inputs_labels_for_multimodal(
         self, input_ids, position_ids, attention_mask, past_key_values, labels,
@@ -154,7 +404,9 @@ class LlavaMetaForCausalLM(ABC):
             if type(images) is list:
                 images = [x.unsqueeze(0) if x.ndim == 3 else x for x in images]
             concat_images = torch.cat([image for image in images], dim=0)
-            image_features = self.encode_images(concat_images)
+            image_features, attn_maps = self.encode_images(concat_images)
+            cls_attn_scores = attn_maps[-1][:, 0, 1:]
+
             split_sizes = [image.shape[0] for image in images]
             image_features = torch.split(image_features, split_sizes, dim=0)
             mm_patch_merge_type = getattr(self.config, 'mm_patch_merge_type', 'flat')
@@ -165,28 +417,37 @@ class LlavaMetaForCausalLM(ABC):
                 new_image_features = []
                 for image_idx, image_feature in enumerate(image_features):
                     if image_feature.shape[0] > 1:
-                        base_image_feature = image_feature[0]
-                        image_feature = image_feature[1:]
+
+                        # Compress global thumbnail 
+                        base_image_feature = image_feature[0] 
+                        base_cls_attn_scores = cls_attn_scores[0] 
+                        base_image_feature_compress, global_compressed_indices = self.compress_thumbnail(base_image_feature, base_cls_attn_scores)
+
+                        # Adaptive retention ratio allocation for local crops
+                        num_patch_width, num_patch_height = get_anyres_image_grid_shape(
+                            image_sizes[image_idx], self.config.image_grid_pinpoints, self.get_vision_tower().config.image_size) # (2, 2)
+
+                        scales = generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height)
+
+                        # Compress loca crops
+                        image_feature = image_feature[1:] 
+                        num_crops = image_feature.shape[0]
+                        cls_attn_scores = cls_attn_scores[1:] 
                         height = width = self.get_vision_tower().num_patches_per_side
-                        assert height * width == base_image_feature.shape[0]
-                        if image_aspect_ratio == 'anyres':
-                            num_patch_width, num_patch_height = get_anyres_image_grid_shape(image_sizes[image_idx], self.config.image_grid_pinpoints, self.get_vision_tower().config.image_size)
-                            image_feature = image_feature.view(num_patch_height, num_patch_width, height, width, -1)
-                        else:
-                            raise NotImplementedError
+
                         if 'unpad' in mm_patch_merge_type:
-                            image_feature = image_feature.permute(4, 0, 2, 1, 3).contiguous()
-                            image_feature = image_feature.flatten(1, 2).flatten(2, 3)
-                            image_feature = unpad_image(image_feature, image_sizes[image_idx])
-                            image_feature = torch.cat((
-                                image_feature,
-                                self.model.image_newline[:, None, None].expand(*image_feature.shape[:-1], 1).to(image_feature.device)
-                            ), dim=-1)
-                            image_feature = image_feature.flatten(1, 2).transpose(0, 1)
+                            original_size = image_sizes[image_idx]
+                            image_feature_compress = self.compress_crops(
+                                image_feature, cls_attn_scores, base_cls_attn_scores,
+                                num_patch_width, num_patch_height, width, height, image_sizes[image_idx], scales
+                            )
+                     
                         else:
                             image_feature = image_feature.permute(0, 2, 1, 3, 4).contiguous()
                             image_feature = image_feature.flatten(0, 3)
-                        image_feature = torch.cat((base_image_feature, image_feature), dim=0)
+                            
+                        image_feature = torch.cat((base_image_feature_compress, image_feature_compress), dim=0)
+            
                     else:
                         image_feature = image_feature[0]
                         if 'unpad' in mm_patch_merge_type:

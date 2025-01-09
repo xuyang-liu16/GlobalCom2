@@ -28,6 +28,11 @@ Bo Zheng<sup>2</sup>, <br>
 * `2025/01/09` 🤗🤗 We release our latest work GlobalCom<sup>2</sup> about accelerating **high-resolution MLLMs** for FREE. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
 * `2024/12/24` 🤗🤗 We release an open-sourse repo "[Awesome-Token-Reduction-for-Model-Compression](https://github.com/xuyang-liu16/Awesome-Token-Reduction-for-Model-Compression)", which collects recent awesome token reduction papers! Feel free to contribute your suggestions!
 
+## ✨ Overview
+<p align="center"> <img src="overview.jpg" width="1000" align="center"> </p>
+
+In this work, we introduce GlobalCom<sup>2</sup>, an innovative token compression approach specifically designed for high-resolution MLLMs that process both thumbnail and multiple crop inputs. The method uniquely positions thumbnail-derived tokens as the "commander" orchestrating the entire compression process, intelligently guiding retention ratio allocation and precise compression for each crop. This strategic approach effectively eliminates redundant information while adaptively preserving crucial local details to the maximum extent possible. Extensive evaluations across 10 benchmarks demonstrate that GlobalCom<sup>2</sup> achieves an optimal efficiency-performance trade-off, consistently surpassing existing state-of-the-art token compression methods when implemented with LLaVA-NeXT-7B/13B models.
+
 
 ## 🛠 Preparation
 
@@ -61,3 +66,9 @@ CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 
 To obtain comprehensive theoretical computational efficiency, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
 
+## 👍 Acknowledgment
+
+We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
+
+## 📩 Contact
+For any question about our paper or code, please email `liuxuyang@stu.scu.edu.cn`.

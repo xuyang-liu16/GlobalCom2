@@ -25,7 +25,7 @@ Bo Zheng<sup>2</sup>, <br>
 
 ## 🔥 News
 
-* `2025/01/09` 🤗🤗 We release our latest work GlobalCom<sup>2</sup> about accelerating **high-resolution MLLMs** for FREE. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
+* `2025/01/10` 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179) about accelerating **high-resolution MLLMs** for FREE. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
 
 ## ✨ Overview
 <p align="center"> <img src="overview.jpg" width="1000" align="center"> </p>
@@ -68,6 +68,21 @@ To obtain comprehensive theoretical computational efficiency, we recommend the m
 ## 👍 Acknowledgment
 
 We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
+
+## 📌 Citation
+
+Please consider citing our paper in your publications, if our findings help your research.
+
+```bibtex
+@article{Liu2025:GlobalCom,
+    title={Compression with Global Guidance: Towards Training-free High-Resolution MLLMs Acceleration}, 
+    author={Xuyang Liu and Ziming Wang and Yuhang Han and Yingyao Wang and Jiale Yuan and Jun Song and Bo Zheng and Linfeng Zhang and Siteng Huang and Honggang Chen},
+    year={2025},
+    eprint={2501.05179},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
+}
+```
 
 ## 📩 Contact
 For any question about our paper or code, please email `liuxuyang@stu.scu.edu.cn`.

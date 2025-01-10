@@ -31,7 +31,7 @@ Bo Zheng<sup>2</sup>, <br>
 ## ✨ Overview
 <p align="center"> <img src="overview.jpg" width="1000" align="center"> </p>
 
-In this work, we introduce GlobalCom<sup>2</sup>, an innovative token compression approach specifically designed for high-resolution MLLMs that process both thumbnail and multiple crop inputs. The method uniquely positions thumbnail-derived tokens as the "commander" orchestrating the entire compression process, intelligently guiding retention ratio allocation and precise compression for each crop. This strategic approach effectively eliminates redundant information while adaptively preserving crucial local details to the maximum extent possible. Extensive evaluations across 10 benchmarks demonstrate that GlobalCom<sup>2</sup> achieves an optimal efficiency-performance trade-off, consistently surpassing existing state-of-the-art token compression methods when implemented with LLaVA-NeXT-7B/13B models.
+**TLDR:** We present GlobalCom<sup>2</sup>, a novel token compression method for high-resolution MLLMs that uses thumbnail tokens to guide crop compression. Evaluations on 10 benchmarks show that GlobalCom<sup>2</sup> achieves superior efficiency-performance trade-off with LLaVA-NeXT models.
 
 ## 💥 Core Codes
 

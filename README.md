@@ -66,10 +66,6 @@ CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 
 To obtain comprehensive theoretical computational efficiency, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
 
-## 👍 Acknowledgment
-
-We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
-
 ## 📌 Citation
 
 Please consider citing our paper in your publications, if our findings help your research.
@@ -84,6 +80,10 @@ Please consider citing our paper in your publications, if our findings help your
     primaryClass={cs.CV}
 }
 ```
+
+## 👍 Acknowledgment
+We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
+
 
 ## 📩 Contact
 For any question about our paper or code, please email `liuxuyang@stu.scu.edu.cn`.

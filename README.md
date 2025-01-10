@@ -81,6 +81,12 @@ Please consider citing our paper in your publications, if our findings help your
 }
 ```
 
+## 💻 Related Works
+
+* [Awesome Token Reduction for Model Compression](https://github.com/xuyang-liu16/Awesome-Token-Reduction-for-Model-Compression): An open-source repository that curates a collection of recent awesome papers on token reduction for model compression.
+* [FiCoCo](https://github.com/kawhiiiileo/FiCoCo): A systematic study that proposes a unified "filter-correlate-compress" paradigm for training-free token reduction in MLLMs, achieving up to 82.4% FLOPs reduction while maintaining model performance.
+
+
 ## 👍 Acknowledgment
 We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
 

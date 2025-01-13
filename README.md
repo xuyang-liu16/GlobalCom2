@@ -68,7 +68,7 @@ Example for evaluating TextVQA results:
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 ```
 
-To calculate the theoretical computational efficiency shown below, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+> To calculate the theoretical computational efficiency shown below, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
 
 <p align="center"> <img src="images/efficiency.jpg" width="1000" align="center"> </p>
 

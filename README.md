@@ -29,7 +29,7 @@ Bo Zheng<sup>2</sup>, <br>
 * **`2024.11.17`**: 🤗🤗 We release our work [FiCoCo](https://ficoco-accelerate.github.io/) which proposes a **unified paradigm** to demystify the popular works and guide the future designs of training-free token reduction for MLLMs. [Code](https://github.com/kawhiiiileo/FiCoCo) is available!
 
 ## ✨ Overview
-<p align="center"> <img src="overview.jpg" width="1000" align="center"> </p>
+<p align="center"> <img src="images/overview.jpg" width="1000" align="center"> </p>
 
 > **TLDR:** We present GlobalCom<sup>2</sup>, a novel token compression method for high-resolution MLLMs that uses thumbnail tokens to guide crop compression. Evaluations on 10 benchmarks show that GlobalCom<sup>2</sup> achieves superior efficiency-performance trade-off with LLaVA-NeXT models.
 
@@ -68,7 +68,9 @@ Example for evaluating TextVQA results:
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 ```
 
-To obtain comprehensive theoretical computational efficiency, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+To calculate the theoretical computational efficiency shown below, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+
+<p align="center"> <img src="images/efficiency.jpg" width="1000" align="center"> </p>
 
 ## 📌 Citation
 
@@ -92,7 +94,7 @@ Please consider citing our paper in your publications, if our findings help your
 
 
 ## 👍 Acknowledgment
-We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA).
+We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA) and [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/).
 
 
 ## 📩 Contact

@@ -67,10 +67,15 @@ Example for evaluating TextVQA results:
 ```Shell
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 ```
-
-> To calculate the theoretical computational efficiency shown below, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+Example for evaluating MME results:
+```Shell
+CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
+```
 
 <p align="center"> <img src="images/efficiency.jpg" width="1000" align="center"> </p>
+
+> To calculate the theoretical computational efficiency shown above, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+
 
 ## 📌 Citation
 

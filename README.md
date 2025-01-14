@@ -74,7 +74,7 @@ CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
 
 <p align="center"> <img src="images/efficiency.jpg" width="1000" align="center"> </p>
 
-> To calculate the theoretical computational efficiency shown above, we recommend the methodology presented in the work of [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
+> To calculate the theoretical computational efficiency shown above, we recommend the methodology presented in the work of [LLM-Viewer](https://github.com/hahnyuan/LLM-Viewer/). We deeply appreciate their outstanding contribution to this field.
 
 
 ## 📌 Citation
@@ -99,7 +99,7 @@ Please consider citing our paper in your publications, if our findings help your
 
 
 ## 👍 Acknowledgment
-We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA) and [LLM-viewer](https://github.com/hahnyuan/LLM-Viewer/).
+We extend our gratitude to the open-source efforts of [LLaVA](https://github.com/haotian-liu/LLaVA) and [LLM-Viewer](https://github.com/hahnyuan/LLM-Viewer/).
 
 
 ## 📩 Contact

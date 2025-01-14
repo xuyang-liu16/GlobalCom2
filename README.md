@@ -80,6 +80,8 @@ CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
 
 <p align="center"> <img src="images/visualizations.jpg" width="1000" align="center"> </p>
 
+Across all presented cases, our GlobalCom<sup>2</sup> demonstrates adaptive redundancy removal across local crops while effectively preserving regions that are significant both locally and globally, enabling LLMs to capture essential information through the retained visual signals.
+
 
 ## 📌 Citation
 

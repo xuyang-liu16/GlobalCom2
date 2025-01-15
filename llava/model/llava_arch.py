@@ -131,13 +131,6 @@ def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_
         scales = base_scale * (1 + softmax_scores - np.mean(softmax_scores))
         scales = np.clip(scales, None, 1.0)
 
-        # Adjust scales to ensure the average scale matches the base scale
-        final_average_scale = np.mean(scales)
-        if not np.isclose(final_average_scale, base_scale):
-            adjustment_factor = base_scale / final_average_scale
-            scales *= adjustment_factor
-            scales = np.clip(scales, None, 1.0)  # Ensure scales do not exceed 1
-
     return scales.tolist()
 
 

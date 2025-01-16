@@ -98,7 +98,7 @@ class LlavaMetaModel:
 
             self.mm_projector.load_state_dict(get_w(mm_projector_weights, 'mm_projector'))
 
-retention_ratio = 0.25
+retention_ratio = 0.25 # defalt 0.25
 
 def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height, base_scale=retention_ratio, temperature=10.0):
 

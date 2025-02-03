@@ -1,6 +1,6 @@
 <div align=center>
 
-<h1> 🔎 Compression with Global Guidance: <br> Towards Training-free High-Resolution MLLMs Acceleration 🚀 </h1>
+<h1> Compression with Global Guidance: <br> Towards Training-free High-Resolution MLLMs Acceleration </h1>
 
 
 <h4 align="center"> 

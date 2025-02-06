@@ -61,7 +61,7 @@ Please follow the detailed instruction in [LLaVA-Evaluation](https://github.com/
 
 ## 🚀 Evaluation
 
-👉 The only hyper-parameter is `retention ratio` in line 101 of [`llava/model/llava_arch.py`](https://github.com/xuyang-liu16/GlobalCom2/blob/main/llava/model/llava_arch.py). You can achieve different acceleration effects by setting different `retention ratio` values (default `retention ratio = 0.25`).
+👉 The only hyper-parameter is `retention ratio` in line 101 of [`llava/model/llava_arch.py`](https://github.com/xuyang-liu16/GlobalCom2/blob/main/llava/model/llava_arch.py). You can achieve different acceleration effects by setting different `retention_ratio` values (default `retention_ratio = 0.25`).
 
 Example for evaluating TextVQA results:
 ```Shell

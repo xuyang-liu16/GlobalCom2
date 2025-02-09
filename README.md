@@ -57,18 +57,26 @@ cd GlobalCom2
 
 Please follow the detailed instruction in [LLaVA-Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
 
+
 4. Download [LLaVA-NeXT-7B](https://huggingface.co/liuhaotian/llava-v1.6-vicuna-7b) and [LLaVA-NeXT-13B](https://huggingface.co/liuhaotian/llava-v1.6-vicuna-13b) and put them under `./liuhaotian/llava-next-7b` and `./liuhaotian/llava-next-13b`.
+
+> For users with limited access to Hugging Face (e.g., from mainland China), you can refer to this you can refer this [alternative guide](https://cloud.baidu.com/article/3251091) and use the following command, with LLaVA-NeXT-7B as an example:
+```
+pip install -U huggingface_hub hf_transfer -i https://mirrors.aliyun.com/pypi/simple/
+export HF_ENDPOINT=https://hf-mirror.com
+huggingface-cli download --resume-download liuhaotian/llava-v1.6-vicuna-7b --local-dir ./liuhaotian/llava-next-7b
+```
 
 ## 🚀 Evaluation
 
 👉 The only hyper-parameter is `retention_ratio` in line 101 of [`llava/model/llava_arch.py`](https://github.com/xuyang-liu16/GlobalCom2/blob/main/llava/model/llava_arch.py). You can achieve different acceleration effects by setting different `retention_ratio` values (default `retention_ratio = 0.25`).
 
 Example for evaluating TextVQA results:
-```Shell
+```
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/textvqa.sh
 ```
 Example for evaluating MME results:
-```Shell
+```
 CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
 ```
 

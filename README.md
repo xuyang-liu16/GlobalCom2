@@ -41,9 +41,9 @@ Multimodal large language models (MLLMs) have attracted considerable attention d
 However, their inference efficiency has been a notable concern, as the increasing length of multimodal contexts leads to quadratic complexity.
 Token compression techniques, which reduce the number of visual tokens, have demonstrated their effectiveness in reducing computational costs.
 Yet, these approaches have struggled to keep pace with the rapid advancements in MLLMs, especially the AnyRes strategy in the context of high-resolution image understanding.
-In this paper, we propose a novel token compression method, GlobalCom$^2$, tailored for high-resolution MLLMs that receive both the thumbnail and multiple crops.
-GlobalCom$^2$ treats the tokens derived from the thumbnail as the ``commander'' of the entire token compression process, directing the allocation of retention ratios and the specific compression for each crop. In this way, redundant tokens are eliminated while important local details are adaptively preserved to the highest extent feasible.
-Empirical results across 10 benchmarks reveal that GlobalCom$^2$ achieves an optimal balance between performance and efficiency, and consistently outperforms state-of-the-art token compression methods with LLaVA-NeXT-7B/13B models.
+In this paper, we propose a novel token compression method, GlobalCom<sup>2</sup>, tailored for high-resolution MLLMs that receive both the thumbnail and multiple crops.
+GlobalCom<sup>2</sup> treats the tokens derived from the thumbnail as the “commander” of the entire token compression process, directing the allocation of retention ratios and the specific compression for each crop. In this way, redundant tokens are eliminated while important local details are adaptively preserved to the highest extent feasible.
+Empirical results across 10 benchmarks reveal that GlobalCom<sup>2</sup> achieves an optimal balance between performance and efficiency, and consistently outperforms state-of-the-art token compression methods with LLaVA-NeXT-7B/13B models.
 </details>
 
 ## 💥 Core Codes

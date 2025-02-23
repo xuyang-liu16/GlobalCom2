@@ -8,7 +8,7 @@
 [Xuyang Liu](https://xuyang-liu16.github.io/)<sup>1</sup>,
 Ziming Wang<sup>2</sup>,
 [Yuhang Han](https://scholar.google.com/citations?user=zggQZNAAAAAJ)<sup>3</sup>,
-Yingyao Wang<sup>2</sup>,
+[Yingyao Wang](https://scholar.google.com/citations?user=vUExRS0AAAAJ&hl)<sup>2</sup>,
 Jiale Yuan<sup>2</sup>,
 Jun Song<sup>2✉</sup>,
 Bo Zheng<sup>2</sup>, <br>

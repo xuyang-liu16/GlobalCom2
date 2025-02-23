@@ -48,7 +48,7 @@ Empirical results across 10 benchmarks reveal that GlobalCom<sup>2</sup> achieve
 
 ## 💥 Core Codes
 
-The two key functions in [`llava/model/llava_arch.py`](https://github.com/xuyang-liu16/GlobalCom2/blob/main/llava/model/llava_arch.py) implement our global-guided local compression: (a) `generate_scale_for_crop_features` for allocating optimal retention ratios based on each crop's global importance, and (b) `interpolate_and_split_cls_attn_scores` for performing token compression with importance from the global perspective.
+The two key functions in [`llava/model/llava_arch.py`](https://github.com/xuyang-liu16/GlobalCom2/blob/main/llava/model/llava_arch.py) implement our global-guided local compression: **(a)** `generate_scale_for_crop_features` for allocating optimal retention ratios based on each crop's global importance, and **(b)** `interpolate_and_split_cls_attn_scores` for performing token compression with importance from the global perspective.
 
 
 ## 🛠 Preparation

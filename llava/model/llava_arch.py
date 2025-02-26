@@ -422,7 +422,7 @@ class LlavaMetaForCausalLM(ABC):
 
                         scales = generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height)
 
-                        # Compress loca crops
+                        # Compress local crops
                         image_feature = image_feature[1:] 
                         num_crops = image_feature.shape[0]
                         cls_attn_scores = cls_attn_scores[1:] 

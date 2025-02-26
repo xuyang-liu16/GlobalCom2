@@ -105,18 +105,19 @@ def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_
     N = base_cls_attn_scores.shape[0]
     side_length = int(N ** 0.5)
 
-    patch_width = side_length // num_patch_width
-    patch_height = side_length // num_patch_height
-    num_patches = num_patch_width * num_patch_height
+    patch_width = max(side_length // num_patch_width, 1)
+    patch_height = max(side_length // num_patch_height, 1)
 
+    num_patches = num_patch_width * num_patch_height
     patch_scores_sum = np.zeros(num_patches)
 
-    # Accumulate scores in respective crop regions
     for idx, score in enumerate(base_cls_attn_scores):
         i, j = divmod(idx, side_length)
-        patch_i = i // patch_height
-        patch_j = j // patch_width
-        patch_index = patch_i * num_patch_width + patch_j  # convert 2D index to 1D index
+        
+        patch_i = min(i // patch_height, num_patch_height - 1)
+        patch_j = min(j // patch_width, num_patch_width - 1)
+        
+        patch_index = patch_i * num_patch_width + patch_j
         patch_scores_sum[patch_index] += score.item()
 
     # Normalize the scores and apply softmax

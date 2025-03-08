@@ -417,7 +417,7 @@ class LlavaMetaForCausalLM(ABC):
                         base_cls_attn_scores = cls_attn_scores[0] 
                         base_image_feature_compress, global_compressed_indices = self.compress_thumbnail(base_image_feature, base_cls_attn_scores)
 
-                        # Adaptive retention ratio allocation for local crops
+                        # Adaptive compression adjustment for local crops
                         num_patch_width, num_patch_height = get_anyres_image_grid_shape(
                             image_sizes[image_idx], self.config.image_grid_pinpoints, self.get_vision_tower().config.image_size) # (2, 2)
 

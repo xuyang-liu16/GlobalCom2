@@ -100,45 +100,37 @@ class LlavaMetaModel:
 
 retention_ratio = 0.25 # defalt 0.25
 
-def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height, 
-                                     base_scale=retention_ratio, temperature=10.0):
- 
+def generate_scale_for_crop_features(base_cls_attn_scores, num_patch_width, num_patch_height, base_scale=retention_ratio, temperature=10.0):
+
     N = base_cls_attn_scores.shape[0]
     side_length = int(N ** 0.5)
 
-    # Calculate per-patch dimensions
     patch_width = max(side_length // num_patch_width, 1)
     patch_height = max(side_length // num_patch_height, 1)
 
     num_patches = num_patch_width * num_patch_height
     patch_scores_sum = np.zeros(num_patches)
-    patch_counts = np.zeros(num_patches) 
 
-    # Aggregate scores per crop region
     for idx, score in enumerate(base_cls_attn_scores):
-        # Convert 1D index to 2D coordinates
         i, j = divmod(idx, side_length)
         
         patch_i = min(i // patch_height, num_patch_height - 1)
         patch_j = min(j // patch_width, num_patch_width - 1)
-        patch_index = patch_i * num_patch_width + patch_j
         
+        patch_index = patch_i * num_patch_width + patch_j
         patch_scores_sum[patch_index] += score.item()
-        patch_counts[patch_index] += 1
 
-    # Calculate mean scores per patch
-    patch_scores_mean = patch_scores_sum / (patch_counts + 1e-8)
-
-    shifted_scores = (patch_scores_mean - np.max(patch_scores_mean)) / temperature
+    # Normalize the scores and apply softmax
+    shifted_scores = (patch_scores_sum - np.max(patch_scores_sum)) / temperature
     exp_scores = np.exp(shifted_scores)
-    softmax_scores = exp_scores / (np.sum(exp_scores) + 1e-8)
+    softmax_scores = exp_scores / (np.sum(exp_scores) + 1e-8)  # add a small constant to avoid division by zero
 
-    # Generate adaptive scales based on softmax distribution
+    # Calculate scales ensuring no scale exceeds 1
     if np.sum(softmax_scores) == 0:
         scales = [base_scale] * num_patches
     else:
         scales = base_scale * (1 + softmax_scores - np.mean(softmax_scores))
-        scales = np.clip(scales, None, 1.0) 
+        scales = np.clip(scales, None, 1.0)
 
     return scales.tolist()
 

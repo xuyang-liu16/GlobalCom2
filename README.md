@@ -1,6 +1,6 @@
 <div align=center>
 
-<h1> 🔎 Compression with Global Guidance: Towards Training-free High-Resolution MLLMs Acceleration 🚀 </h1>
+<h1> 🔎 Global Compression Commander: Plug-and-Play Inference Acceleration for High-Resolution Large Vision-Language Models 🚀 </h1>
 
 
 <h4 align="center"> 
@@ -25,26 +25,13 @@ Bo Zheng<sup>2</sup>, <br>
 
 ## 🔥 News
 
-* **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution MLLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
+* **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
 * **`2024.11.17`** 🤗🤗 We release our work [FiCoCo](https://ficoco-accelerate.github.io/) which proposes a **unified paradigm** to demystify the popular works and guide the future designs of training-free token reduction for MLLMs. [Code](https://github.com/kawhiiiileo/FiCoCo) is available!
 
 ## ✨ Overview
 <p align="center"> <img src="images/overview.jpg" width="1000" align="center"> </p>
 
-> **TLDR:** We present GlobalCom<sup>2</sup>, a novel token compression method for high-resolution MLLMs that uses thumbnail tokens to guide crop compression.
-
-<details>
-  <summary>
-  <font size="+1">Abstract</font>
-  </summary>
-Multimodal large language models (MLLMs) have attracted considerable attention due to their exceptional performance in visual content understanding and reasoning.
-However, their inference efficiency has been a notable concern, as the increasing length of multimodal contexts leads to quadratic complexity.
-Token compression techniques, which reduce the number of visual tokens, have demonstrated their effectiveness in reducing computational costs.
-Yet, these approaches have struggled to keep pace with the rapid advancements in MLLMs, especially the AnyRes strategy in the context of high-resolution image understanding.
-In this paper, we propose a novel token compression method, GlobalCom<sup>2</sup>, tailored for high-resolution MLLMs that receive both the thumbnail and multiple crops.
-GlobalCom<sup>2</sup> treats the tokens derived from the thumbnail as the “commander” of the entire token compression process, directing the allocation of retention ratios and the specific compression for each crop. In this way, redundant tokens are eliminated while important local details are adaptively preserved to the highest extent feasible.
-Empirical results across 10 benchmarks reveal that GlobalCom<sup>2</sup> achieves an optimal balance between performance and efficiency, and consistently outperforms state-of-the-art token compression methods with LLaVA-NeXT-7B/13B models.
-</details>
+> **TLDR:** We present GlobalCom<sup>2</sup>, a novel token compression method for high-resolution LVLMs that uses thumbnail tokens to guide crop compression.
 
 ## 💥 Core Codes
 

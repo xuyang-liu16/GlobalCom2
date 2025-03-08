@@ -72,7 +72,7 @@ class CLIPVisionTower(nn.Module):
         else:
             image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
             image_features = self.feature_select(image_forward_outs[0])
-            attn_maps = image_forward_outs[1] # list of 24 layers' attn_maps [1+num_crops, 577, 577]
+            attn_maps = image_forward_outs[1]
 
         return image_features, attn_maps
 

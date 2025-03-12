@@ -26,9 +26,13 @@ Bo Zheng<sup>2</sup>, <br>
 ## 🔥 News
 
 * **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
-* **`2024.11.17`** 🤗🤗 We release our work [FiCoCo](https://ficoco-accelerate.github.io/) which proposes a **unified paradigm** to demystify the popular works and guide the future designs of training-free token reduction for MLLMs. [Code](https://github.com/kawhiiiileo/FiCoCo) is available!
+* **`2024.11.17`** 🤗🤗 We release our work [FiCoCo](https://ficoco-accelerate.github.io/) which proposes a **unified paradigm** to demystify the popular works and guide the future designs of training-free token reduction for LVLMs. [Code](https://github.com/kawhiiiileo/FiCoCo) is available!
 
 ## ✨ Overview
+<p align="center"> <img src="images/philosophy.jpg" width="1000" align="center"> </p>
+
+> **Design philosophy of “global-to-local” guided token compression.** GlobalCom<sup>2</sup> evaluates the information richness of crops from a global perspective to preserve informative regions while removing redundancy.
+
 <p align="center"> <img src="images/overview.jpg" width="1000" align="center"> </p>
 
 > **TLDR:** We present GlobalCom<sup>2</sup>, a novel token compression method for high-resolution LVLMs that uses thumbnail tokens to guide crop compression.

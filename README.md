@@ -26,8 +26,7 @@ Bo Zheng<sup>2</sup>, <br>
 ## 🔥 News
 
 * **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
-* **`2024/12/24`** 🤗🤗 We release an open-sourse repo "[Awesome-Token-level-Model-Compression](https://github.com/xuyang-liu16/Awesome-Token-level-Model-Compression)", which collects recent awesome token compression papers! Feel free to contribute your suggestions!
-* **`2024.11.17`** 🤗🤗 We release our work [FiCoCo](https://ficoco-accelerate.github.io/) which proposes a **unified paradigm** to demystify the popular works and guide the future designs of training-free token reduction for LVLMs. [Code](https://github.com/kawhiiiileo/FiCoCo) is available!
+* 
 
 ## ✨ Overview
 

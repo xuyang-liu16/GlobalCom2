@@ -26,7 +26,6 @@ Bo Zheng<sup>2</sup>, <br>
 ## 🔥 News
 
 * **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
-* 
 
 ## ✨ Overview
 

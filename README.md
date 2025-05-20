@@ -17,7 +17,7 @@ Bo Zheng<sup>2</sup>, <br>
 [Honggang Chen](https://sites.google.com/view/honggangchen/)<sup>1✉</sup>
 
 <sup>1</sup>Sichuan University, <sup>2</sup>Taobao & Tmall Group of Alibaba, <br>
-<sup>3</sup>Northwest Polytechnical University, <sup>4</sup>Shanghai Jiaotong University, <sup>5</sup>Zhejiang University
+<sup>3</sup>Northwest Polytechnical University, <sup>4</sup>Shanghai Jiao Tong University, <sup>5</sup>Zhejiang University
 
 </h4>
 

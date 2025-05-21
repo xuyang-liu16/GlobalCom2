@@ -25,7 +25,9 @@ Bo Zheng<sup>2</sup>, <br>
 
 ## 🔥 News
 
-* **`2025.01.10`** 🤗🤗 We release our latest work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
+* **`2025.05.21`** 🤗🤗 We release our latest work [VidCom<sup>2</sup>](https://arxiv.org/abs/2505.14454), a plug-and-play inference acceleration method of **VideoLLMs**. [Code](https://github.com/xuyang-liu16/VidCom2) is available!
+
+* **`2025.01.10`** 🤗🤗 We release our work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
 
 ## ✨ Overview
 

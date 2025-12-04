@@ -98,13 +98,11 @@ CUDA_VISIBLE_DEVICES=0 bash scripts/v1_5/eval/mme.sh
 Please consider citing our paper in your publications, if our findings help your research.
 
 ```bibtex
-@article{Liu2025:GlobalCom,
-    title={Compression with Global Guidance: Towards Training-free High-Resolution MLLMs Acceleration}, 
-    author={Xuyang Liu and Ziming Wang and Yuhang Han and Yingyao Wang and Jiale Yuan and Jun Song and Bo Zheng and Linfeng Zhang and Siteng Huang and Honggang Chen},
-    year={2025},
-    eprint={2501.05179},
-    archivePrefix={arXiv},
-    primaryClass={cs.CV}
+@article{liu2025global,
+  title={Global Compression Commander: Plug-and-Play Inference Acceleration for High-Resolution Large Vision-Language Models},
+  author={Liu, Xuyang and Wang, Ziming and Chen, Junjie and Han, Yuhang and Wang, Yingyao and Yuan, Jiale and Song, Jun and Zhang, Linfeng and Huang, Siteng and Chen, Honggang},
+  journal={arXiv preprint arXiv:2501.05179},
+  year={2025}
 }
 ```
 

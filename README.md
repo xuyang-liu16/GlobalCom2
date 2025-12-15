@@ -1,6 +1,6 @@
 <div align=center>
 
-<h1> 🔎 Global Compression Commander: Plug-and-Play Inference Acceleration for High-Resolution Large Vision-Language Models 🚀 </h1>
+<h1> 🔎 Global Compression Commander: Plug-and-Play Inference Acceleration for High-Resolution Large Vision-Language Models </h1>
 
 
 <h4 align="center"> 

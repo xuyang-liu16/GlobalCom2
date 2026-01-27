@@ -25,6 +25,7 @@ Bo Zheng<sup>2</sup>, <br>
 
 ## 🔥 News
 
+* **`2026.01.26`** 🎊🎊 Our [MixKV](https://arxiv.org/abs/2510.20707) have been accepted by **ICLR 2026**! 
 * **`2025.11.08`** 🎉🎉 Our [FiCoCo](https://ficoco-accelerate.github.io/) and [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179) have been accepted by **AAAI 2026**!
 * **`2025.10.24`** 🤗🤗 We release our latest work [MixKV](https://arxiv.org/pdf/2510.20707), a novel KV cache compression method of LVLMs. [Code](https://github.com/xuyang-liu16/MixKV) is available!
 * **`2025.01.10`** 🤗🤗 We release our work [GlobalCom<sup>2</sup>](https://arxiv.org/abs/2501.05179), a "global-to-local" approach for training-free acceleration of **high-resolution LVLMs**. [Code](https://github.com/xuyang-liu16/GlobalCom2) is available!
